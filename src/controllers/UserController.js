@@ -46,15 +46,14 @@ export const getUsers = async ({ request, response }) => {
           response.status = 200;
           response.body = { users: usersArray[page - 1] };
         } else {
-          response.status = 200;
-          response.body = { users };
+          throw new Error("Invalid Params: The params cannot be 0!");
         }
       } else {
         throw new Error("Missing one of the params!");
       }
     } else {
-        response.status = 200;
-        response.body = { users };
+      response.status = 200;
+      response.body = { users }
     }
   } catch (error) {
     response.status = 400;
