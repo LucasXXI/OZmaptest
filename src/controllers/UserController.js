@@ -1,30 +1,4 @@
-let users = [
-  {
-    name: "Lucas",
-    age: "19",
-    email: "lucas@gmail.com",
-  },
-  {
-    name: "Rodrigo",
-    age: "19",
-    email: "rodrigo@gmail.com",
-  },
-  {
-    name: "Pedro",
-    age: "19",
-    email: "pedro@gmail.com",
-  },
-  {
-    name: "Gabriel",
-    age: "19",
-    email: "gabriel@gmail.com",
-  },
-  {
-    name: "Matheus",
-    age: "20",
-    email: "matheus@gmail.com",
-  }
-];
+import User from "../schemas/userSchema.js";
 
 export const getUsers = async ({ request, response }) => {
   const { page, quantity } = request.query;
@@ -32,19 +6,13 @@ export const getUsers = async ({ request, response }) => {
   try {
     if (page || quantity) {
       if (page && quantity) {
-        if (page > 0 && quantity > 0 && quantity <= users.length) {
-          const usersArray = users.reduce((result, item, index) => {
-            const quantityIndex = Math.floor(index / quantity);
-            if (!result[quantityIndex]) {
-              result[quantityIndex] = []; // start a new page
-            }
-            result[quantityIndex].push(item);
-
-            return result;
-          }, []);
-
+        if (page > 0 && quantity > 0) {
+          const users = await User.findAll({
+            limit: quantity,
+            offset: page - 1,
+          });
           response.status = 200;
-          response.body = { users: usersArray[page - 1] };
+          response.body = { users };
         } else {
           throw new Error("Invalid Params: The params cannot be 0!");
         }
@@ -52,8 +20,9 @@ export const getUsers = async ({ request, response }) => {
         throw new Error("Missing one of the params!");
       }
     } else {
+      const users = await User.findAll();
       response.status = 200;
-      response.body = { users }
+      response.body = { users };
     }
   } catch (error) {
     response.status = 400;
@@ -65,10 +34,12 @@ export const getUser = async ({ request, response }) => {
   const { id } = request.params;
 
   try {
-    if (id < users.length) {
-      response.body = { user: users[id] };
+    const user = await User.findByPk(id);
+    if (user) {
+      response.status = 200;
+      response.body = { user };
     } else {
-      throw new Error("Non existent user in index.");
+      throw new Error("Inexistent Index!");
     }
   } catch (error) {
     response.status = 400;
@@ -78,9 +49,11 @@ export const getUser = async ({ request, response }) => {
 
 export const createUser = async ({ request, response }) => {
   try {
-    if (Object.values(request.body).length !== 0) {
-      users.push(request.body);
-      response.body = { users };
+    const user = await User.create(request.body);
+
+    if (user) {
+      response.status = 200;
+      response.body = { user };
     } else {
       throw new Error("The request body is empty");
     }
@@ -94,11 +67,14 @@ export const deleteUser = async ({ request, response }) => {
   const { id } = request.params;
 
   try {
-    if (id < users.length) {
-      users.splice(id, 1);
-      response.body = { users };
+    const user = await User.destroy({ where: { id } });
+    if (user === 1) {
+      response.status = 200;
+      response.body = "User Deleted sucssesfully!";
     } else {
-      throw new Error("Couldn't delete inexistent user in storage");
+      throw new Error(
+        "The delete request couldn't be completed: unexistent ID!"
+      );
     }
   } catch (error) {
     response.status = 400;
@@ -111,13 +87,10 @@ export const updateUser = async ({ request, response }) => {
   const { body } = request;
 
   try {
-    if (id < users.length) {
-      for (let [key, value] of Object.entries(body)) {
-        if (Object.keys(users[id]).includes(key)) {
-          users[id][key] = value;
-        }
-      }
-      response.body = { user: users[id] };
+    if (id) {
+      const user = await User.findByPk(id).update(body);
+      response.status = 200; 
+      response.body = { user };
     } else {
       throw new Error("Couldn't find user in storage");
     }
@@ -126,5 +99,3 @@ export const updateUser = async ({ request, response }) => {
     response.body = { error: error.message };
   }
 };
-
-
