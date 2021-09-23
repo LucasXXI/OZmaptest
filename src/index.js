@@ -1,5 +1,8 @@
 import Koa from "koa";
 import router from "./routes.js";
+import sequelize from './database/index.js'
+
+sequelize.sync().then(() => console.log('[System] The DB is running...'));
 
 const app = new Koa();
 
