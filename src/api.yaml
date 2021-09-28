@@ -45,13 +45,9 @@ paths:
       summary: post a user in the database
       description: This route creates a user and store on the database
       requestBody:
-        required: true
-        content:
-          aplication/json:
-            schema:
-              $ref: '#/components/schemas/user'
+        $ref: '#/components/requestBodies/User'
       responses: 
-        "200": 
+        "200":  
           description: OK, user Created in the database
         "400":
           description: Bad Request!
@@ -75,7 +71,10 @@ components:
           type: integer
         email:
           type: string
-
+      required:
+        - name
+        - age
+        - email
                 
                 
                 
