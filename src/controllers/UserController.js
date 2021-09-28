@@ -89,7 +89,7 @@ export const updateUser = async ({ request, response }) => {
 
   try {
     if (id) {
-      const user = await User.findByPk(id).update(body);
+      const user = await (await User.findByPk(id)).update(body);
       response.status = 200; 
       response.body = { user };
     } else {
