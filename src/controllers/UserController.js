@@ -22,7 +22,7 @@ export const getUsers = async ({ request, response }) => {
     } else {
       const users = await User.findAll();
       response.status = 200;
-      response.body = { users };
+      response.body = users;
     }
   } catch (error) {
     response.status = 400;
@@ -52,8 +52,9 @@ export const createUser = async ({ request, response }) => {
     const user = await User.create(request.body);
 
     if (user) {
+      console.log("working")
       response.status = 200;
-      response.body = { user };
+      response.body =  user;
     } else {
       throw new Error("The request body is empty");
     }
