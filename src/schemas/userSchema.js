@@ -1,13 +1,13 @@
-import { Sequelize } from 'sequelize';
-import sequelize from '../database/index.js';
- 
-const User = sequelize.define('User', {
+import { Sequelize } from "sequelize";
+import sequelize from "../database/index.js";
+
+const User = sequelize.define("User", {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  name:{
+  name: {
     type: Sequelize.STRING,
     allowNull: false,
   },
@@ -18,7 +18,7 @@ const User = sequelize.define('User', {
   email: {
     type: Sequelize.STRING,
     allowNull: false,
-  }
+  },
 });
 
 export default User;
