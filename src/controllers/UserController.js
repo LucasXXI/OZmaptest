@@ -52,9 +52,8 @@ export const createUser = async ({ request, response }) => {
     const user = await User.create(request.body);
 
     if (user) {
-      console.log("working")
       response.status = 200;
-      response.body =  user;
+      response.body = user;
     } else {
       throw new Error("The request body is empty");
     }
@@ -89,8 +88,9 @@ export const updateUser = async ({ request, response }) => {
 
   try {
     if (id) {
-      const user = await (await User.findByPk(id)).update(body);
-      response.status = 200; 
+      const user = await User.findByPk(id);
+      await user.update(body);
+      response.status = 200;
       response.body = { user };
     } else {
       throw new Error("Couldn't find user in storage");

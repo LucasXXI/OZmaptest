@@ -28,32 +28,32 @@ describe("Application Tests", () => {
       .post("/users")
       .send({
         name: "Lucas",
-        age: "19",
+        age: 19,
         email: "lucas@gmail.com",
       })
       .send({
         name: "Lucas 2",
-        age: "19",
+        age: 19,
         email: "lucas@gmail.com",
       })
       .send({
         name: "Lucas 3",
-        age: "19",
+        age: 19,
         email: "lucas@gmail.com",
       })
       .send({
         name: "Lucas 4",
-        age: "19",
+        age: 19,
         email: "lucas@gmail.com",
       })
       .send({
         name: "Lucas 5",
-        age: "19",
+        age: 19,
         email: "lucas@gmail.com",
       })
       .send({
         name: "Lucas 6",
-        age: "19",
+        age: 19,
         email: "lucas@gmail.com",
       })
       .end((err, res) => {
@@ -67,9 +67,8 @@ describe("Application Tests", () => {
       .request(server)
       .get("/users")
       .end((err, res) => {
-        console.log(res.body)
         expect(err).to.be.null;
-        expect(res.body.users).to.have.length.above(0);
+        expect(res.body).to.have.length.above(0);
         expect(res).to.have.status(200);
         done();
       });
@@ -112,7 +111,7 @@ describe("Application Tests", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(200);
-        expect(res.body.users).to.have.length.above(5);
+        expect(res.body).to.have.length.above(5);
         done();
       });
   });
@@ -122,14 +121,11 @@ describe("Pagination Test", () => {
   it("Pagination with one page and 3 users", (done) => {
     chai
       .request(server)
-      .get("/users/?page=1&quantity=3")
+      .get("/users?page=1&quantity=3")
       .end((err, res) => {
         expect(err).to.be.null;
-        expect(res.body.users).to.have.length(3)
+        expect(res.body.users).to.have.length(3);
         done();
       });
   });
 });
-
-
-
