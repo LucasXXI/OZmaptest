@@ -8,7 +8,7 @@ const { ui } = swagger2koa;
 
 sequelize.sync().then(() => console.log("[System] The DB is running..."));
 
-const swaggerDocument = swagger.loadDocumentSync("src/api.yaml");
+const swaggerDocument = swagger.loadDocumentSync("api.yaml");
 
 const app = new Koa();
 

@@ -1,0 +1,181 @@
+openapi: 3.0.0
+info:
+  title: OZmap Test API
+  description: API documentation for OZmap technical test.
+  version: 1.0.0
+  contact:
+    name: Lucas Leal
+    email: lucasleal2001@gmail.com
+    url: github.com/lucasxxi
+externalDocs:
+  description: API Repository on Github
+  url: https://github.com/LucasXXI/OZmaptest
+servers:
+  - url: http://localhost:3000
+    description: API test server
+paths:
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Fetch all users in database
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: false
+          description: Number of pages in which the users will be shown
+        - in: query
+          name: quantity
+          schema:
+            type: integer
+          required: false
+          description: Number of users in each page to be shown
+      responses:
+        '200':
+          description: Success
+          content:
+            aplication/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    age:
+                      type: integer
+                    email:
+                      type: string
+        '400':
+          description: bad request!
+
+    post:
+      tags: 
+        - Users
+      summary: Create a user in the database
+      description: This route creates a user and store on the database
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses: 
+        "200":  
+          description: OK, user Created in the database
+        "400":
+          description: Bad Request!
+          
+  /users/{id}:
+    get:
+      tags: 
+         - Users
+      summary: Get a user by id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
+      responses:
+        '200':
+          description: ok
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  age:
+                    type: integer
+                  email:
+                    type: string
+        '400':
+          description: Bad Request, could't fetch users!
+    delete:
+      tags: 
+         - Users
+      summary: Delete a user by id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
+      responses:
+        '200':
+          description: User Deleted!
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  age:
+                    type: integer
+                  email:
+                    type: string
+        '400':
+          description: Bad Request, Couldn't delete user!
+    patch:    
+      tags: 
+        - Users
+      summary: Update a user in the database
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      description: This updates a user by its ID
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses: 
+        "200":  
+          description: OK, user updated Sucessfully!
+        "400":
+          description: Bad Request! cannot update user!
+
+components:
+  requestBodies:
+    User:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/user'
+  schemas:
+    user:
+      type: object
+      properties:
+        name:
+          type: string
+        age: 
+          type: integer
+        email:
+          type: string
+      required:
+        - name
+        - age
+        - email
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
