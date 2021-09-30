@@ -4,12 +4,21 @@ import chaiJson from "chai-json-schema";
 import server from "../src/index.js";
 
 import userSchema from "../src/schemas/userSchema.js";
-import errorSchema from "../src/schemas/errorSchema.js";
 
 chai.use(chaiHttp);
 chai.use(chaiJson);
 
 const { expect } = chai;
+
+const createManyUsers = async () => {
+  await chai.request(server).post("/users").send({
+    name: "Raupp",
+    age: 19,
+    email: "raupp@exemple.com",
+  });
+};
+
+for (let i = 0; i < 6; i++) createManyUsers();
 
 describe("Application Tests", () => {
   it("the server and the Database are up and running!", (done) => {
@@ -22,47 +31,23 @@ describe("Application Tests", () => {
         done();
       });
   });
-  it("Should Create five users", (done) => {
+  it("Should Create a new user", (done) => {
     chai
       .request(server)
       .post("/users")
       .send({
         name: "Lucas",
         age: 19,
-        email: "lucas@gmail.com",
-      })
-      .send({
-        name: "Lucas 2",
-        age: 19,
-        email: "lucas@gmail.com",
-      })
-      .send({
-        name: "Lucas 3",
-        age: 19,
-        email: "lucas@gmail.com",
-      })
-      .send({
-        name: "Lucas 4",
-        age: 19,
-        email: "lucas@gmail.com",
-      })
-      .send({
-        name: "Lucas 5",
-        age: 19,
-        email: "lucas@gmail.com",
-      })
-      .send({
-        name: "Lucas 6",
-        age: 19,
-        email: "lucas@gmail.com",
+        email: "lucas@exemple.com",
       })
       .end((err, res) => {
         expect(err).to.be.null;
+        expect(res.body).to.be.jsonSchema(userSchema);
         expect(res).to.have.status(200);
         done();
       });
   });
-  it("Should response an array with users", (done) => {
+  it("Should response the list of users", (done) => {
     chai
       .request(server)
       .get("/users")
@@ -76,7 +61,7 @@ describe("Application Tests", () => {
   it("Can acesses new user index", (done) => {
     chai
       .request(server)
-      .get("/users/1")
+      .get("/users/7")
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(200);
@@ -97,7 +82,7 @@ describe("Application Tests", () => {
   it("Should delete the user created", (done) => {
     chai
       .request(server)
-      .delete("/users/1")
+      .delete("/users/7")
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(200);
@@ -115,16 +100,38 @@ describe("Application Tests", () => {
         done();
       });
   });
+  it("Should update a user's atribute", (done) => {
+    chai
+      .request(server)
+      .patch("/users/6")
+      .send({
+        name: "Lucas",
+        age: 19,
+        email: "lucas@gmail.com",
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res.body.user).to.contain({
+          name: "Lucas",
+          age: 19,
+          email: "lucas@gmail.com",
+        });
+
+        done();
+      });
+  });
 });
 
 describe("Pagination Test", () => {
   it("Pagination with one page and 3 users", (done) => {
     chai
       .request(server)
-      .get("/users?page=1&quantity=3")
+      .get("/users")
+      .query({ page: 1, quantity: 2 })
       .end((err, res) => {
         expect(err).to.be.null;
-        expect(res.body.users).to.have.length(3);
+        expect(res.body.users).to.have.length(2);
+        expect(res).to.have.status(200);
         done();
       });
   });
