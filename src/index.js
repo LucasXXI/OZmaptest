@@ -1,34 +1,24 @@
-//Voce deve rodar os testes usando:  npm test
-//Para testar a aplicação, rode: npm run dev
+import Koa from "koa";
+import router from "./routes.js";
+import sequelize from "./database/index.js";
+import cors from "@koa/cors";
+import swagger from "swagger2";
+import swagger2koa from "swagger2-koa";
+const { ui } = swagger2koa;
 
-//mais infos
-//https://github.com/ZijianHe/koa-router
+sequelize.sync().then(() => console.log("[System] The DB is running..."));
 
-// todas as configuraçoes devem ser passadas via environment variables
-const PORT = process.env.PORT || 3000;
+const swaggerDocument = swagger.loadDocumentSync("api.yaml");
 
-const Koa = require('koa');
-const Router = require('koa-router');
+const app = new Koa();
 
-const koa = new Koa();
-var router = new Router();
-
-//rota simples pra testar se o servidor está online
-router.get('/', async (ctx) => {
-  ctx.body = `Seu servidor esta rodando em http://localhost:${PORT}`; //http://localhost:3000/
-});
-
-//Uma rota de exemplo simples aqui.
-//As rotas devem ficar em arquivos separados, /src/controllers/userController.js por exemplo
-router.get('/users', async (ctx) => {
-    ctx.status = 200;
-    ctx.body = {total:0, count: 0, rows:[]}
-});
-
-koa
+app
+  .use(ui(swaggerDocument, "/documentation"))
+  .use(cors())
   .use(router.routes())
   .use(router.allowedMethods());
 
-const server = koa.listen(PORT);
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT);
 
-module.exports = server;
+export default server;
