@@ -116,14 +116,13 @@ describe("Application Tests", () => {
           age: 19,
           email: "lucas@gmail.com",
         });
-
         done();
       });
   });
 });
 
 describe("Pagination Test", () => {
-  it("Pagination with one page and 3 users", (done) => {
+  it("Pagination with one page and 2 users", (done) => {
     chai
       .request(server)
       .get("/users")
